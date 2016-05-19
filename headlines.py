@@ -10,6 +10,13 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
 
 
 @app.route("/")
+@app.route("/bbc")
+def bbc():
+    return get_news('bbc')
+
+@app.route("/cnn")
+def cnn():
+    return get_news('cnn')
 
 
 def get_news(publication):
