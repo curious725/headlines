@@ -13,35 +13,48 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'fox': 'http://feeds.foxnews.com/foxnews/latest',
              'iol': 'http://www.iol.co.za/cmlink/1.640'}
 
+WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID=814cd82f08404ebad86b7f7250d6a7c4"
 
+DEFAULTS = {'publication':'bbc',
+            'city': 'London,UK'}
 
 @app.route("/")
-def get_news():
-    # get customised headlines, based on user input or default
-    query = request.args.get("publication")
+def home():
+    # get customized headlines, based on user input of default
+    publication = request.args.get('publication')
+    if not publication:
+        publication = DEFAULTS['publication']
+    articles = get_news(publication)
+    # get customized weather based on user input or default
+    city = request.args.get('city')
+    if not city:
+        city = DEFAULTS['city']
+    weather = get_weather(city)
+    return render_template("home.html", articles=articles,
+    weather=weather)
+
+def get_news(query):
     if not query or query.lower() not in RSS_FEEDS:
-        publication = "bbc"
+        publication = DEFAULTS["publication"]
     else:
         publication = query.lower()
     feed = feedparser.parse(RSS_FEEDS[publication])
-    weather = get_weather("London,UK")
-    return render_template("home.html",
-    articles=feed['entries'],
-    weather=weather)
+    return feed['entries']
 
 def get_weather(query):
-    api_url = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=814cd82f08404ebad86b7f7250d6a7c4"
     query = urllib.quote(query)
-    url = api_url.format(query)
+    url = WEATHER_URL.format(query)
     data = urllib2.urlopen(url).read()
     parsed = json.loads(data)
     weather = None
-    if parsed.get("weather"):
-        weather = {"description":parsed["weather"][0]["description"],
-                    "temperature":parsed["main"]["temp"],
-                    "city":parsed["name"]
-                    }
+    if parsed.get('weather'):
+        weather = \
+        {'description':parsed['weather'][0]['description'],
+        'temperature':parsed['main']['temp'],
+        'city':parsed['name']}
     return weather
+
+
 
 
 if __name__ == '__main__':
