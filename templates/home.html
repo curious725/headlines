@@ -17,13 +17,17 @@
 		<form>
 			from:   <select name="currency_from">
 					{% for currency in currencies %}
-						<option value="{{currency}}">{{currency}}</option>
+						<option value="{{currency}}"
+						{{'selected="selected"' if currency_from==currency}}>
+						{{currency}}</option>
 						{% endfor %}
 					</select>
 
 			to:		<select value="currency_to">
 					{% for currency in currencies %}
-						<option value="{{currency}}">{{currency}}</option>
+						<option value="{{currency}}"
+						{{'selected="selected"' if currency_to==currency}}>
+						{{currency}}</option>
 						{% endfor %}
 					</select>
 					<input type="submit" value="Submit" />
