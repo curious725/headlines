@@ -13,7 +13,24 @@
 		<p>{{weather.description}} | {{weather.temperature}} &#8451</p>
 
 		<h2>Currency</h2>
+		
+		<form>
+			from:   <select name="currency_from">
+					{% for currency in currencies %}
+						<option value="{{currency}}">{{currency}}</option>
+						{% endfor %}
+					</select>
+
+			to:		<select value="currency_to">
+					{% for currency in currencies %}
+						<option value="{{currency}}">{{currency}}</option>
+						{% endfor %}
+					</select>
+					<input type="submit" value="Submit" />
+
+		</form>
 		<p>{{currency_from}} = {{currency_to}} {{rate}}</p>
+
 
 		<form>
 			<input type="text" name="publication" placeholder="search" />
