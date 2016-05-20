@@ -1,7 +1,10 @@
 import feedparser
 from flask import Flask
+from flask import make_response
 from flask import render_template
 from flask import request
+
+import datetime
 import json
 import urllib
 import urllib2
@@ -43,9 +46,18 @@ def home():
     if not currency_to:
         currency_to = DEFAULTS['currency_to']
     rate, currencies = get_rate(currency_from, currency_to)
-    return render_template("home.html", articles=articles, weather=weather,
-                           currency_from=currency_from, currency_to=currency_to, rate=rate,
-                           currencies=sorted(currencies))
+
+    # save cookies and return template
+    response = make_response(render_template("home.html", articles=articles,
+                                            weather=weather, currency_from=currency_from,
+                                            currency_to=currency_to, rate=rate, currencies=sorted(currencies)))
+    expires = datetime.datetime.now() + datetime.timedelta(days=365)
+    response.set_cookie("publication", publication, expires=expires)
+    response.set_cookie("city", city, expires=expires)
+    response.set_cookie("currency_from", currency_from, expires=expires)
+    response.set_cookie("currency_to", currency_to, expires=expires)
+    return response
+
 
 
 def get_rate(frm, to):
