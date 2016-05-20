@@ -30,8 +30,7 @@ def get_news():
     weather=weather)
 
 def get_weather(query):
-    api_url = "http://api.openweathermap.org/data/2.5/" +\
-        +"weather?q={}&units=metric&appid=814cd82f08404ebad86b7f7250d6a7c4"
+    api_url = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=814cd82f08404ebad86b7f7250d6a7c4"
     query = urllib.quote(query)
     url = api_url.format(query)
     data = urllib2.urlopen(url).read()
