@@ -1,8 +1,8 @@
 import feedparser
 from flask import Flask
-from flask import make_response
 from flask import render_template
 from flask import request
+from flask import make_response
 
 import datetime
 import json
@@ -16,8 +16,8 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'fox': 'http://feeds.foxnews.com/foxnews/latest',
              'iol': 'http://www.iol.co.za/cmlink/1.640'}
 
-WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID=814cd82f08404ebad86b7f7250d6a7c4"
-CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id=7f2636084b5b4bc485e598be2702cc28"
+WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID=cb932829eacb6a0e9ee4f38bfbf112ed"
+CURRENCY_URL = "https://openexchangerates.org//api/latest.json?app_id=b23c94daab584f4580e4e2bf75cbcf7e"
 
 DEFAULTS = {'publication': 'bbc',
             'city': 'London,UK',
@@ -31,7 +31,9 @@ def home():
     # get customised headlines, based on user input or default
     publication = request.args.get('publication')
     if not publication:
-        publication = DEFAULTS['publication']
+        publication = request.cookies.get("publication")
+        if not publication:
+            publication = DEFAULTS['publication']
     articles = get_news(publication)
     # get customised weather based on user input or default
     city = request.args.get('city')
@@ -46,8 +48,6 @@ def home():
     if not currency_to:
         currency_to = DEFAULTS['currency_to']
     rate, currencies = get_rate(currency_from, currency_to)
-
-    # save cookies and return template
     response = make_response(render_template("home.html", articles=articles,
                                             weather=weather, currency_from=currency_from,
                                             currency_to=currency_to, rate=rate, currencies=sorted(currencies)))
@@ -57,8 +57,6 @@ def home():
     response.set_cookie("currency_from", currency_from, expires=expires)
     response.set_cookie("currency_to", currency_to, expires=expires)
     return response
-
-
 
 def get_rate(frm, to):
     all_currency = urllib2.urlopen(CURRENCY_URL).read()
