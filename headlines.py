@@ -24,7 +24,10 @@ def get_news():
     else:
         publication = query.lower()
     feed = feedparser.parse(RSS_FEEDS[publication])
-    return render_template("home.html",articles=feed['entries'])
+    weather = get_weather("London,UK")
+    return render_template("home.html",
+    articles=feed['entries'],
+    weather=weather)
 
 def get_weather(query):
     api_url = "http://api.openweathermap.org/data/2.5/" +\
