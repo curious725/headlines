@@ -14,6 +14,7 @@ RSS_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
              'iol': 'http://www.iol.co.za/cmlink/1.640'}
 
 WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID=814cd82f08404ebad86b7f7250d6a7c4"
+CURRENCY_URL = "https://openexchangerates.org//api/latest.json?7f2636084b5b4bc485e598be2702cc28"
 
 DEFAULTS = {'publication':'bbc',
             'city': 'London,UK'}
@@ -54,6 +55,14 @@ def get_weather(query):
         'city':parsed['name'],
         'country': parsed['sys']['country']}
     return weather
+
+def get_rate(frm, to):
+    all_currency = urllib2.urlopen(CURRENCY_URL).read()
+
+    parsed = json.loads(all_currency).get('rates')
+    frm_rate = parsed.get(frm.upper())
+    to_rate = parsed.get(to.upper())
+    return to_rate/frm_rate
 
 
 
